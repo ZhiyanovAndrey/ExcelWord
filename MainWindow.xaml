@@ -7,6 +7,10 @@
         mc:Ignorable="d"
         Title="MainWindow" Height="200" Width="200">
     <StackPanel>
+        <Menu Background="gray">
+            <MenuItem Header="Открыть"/>
+            
+        </Menu>
         <Label Content="Введите ссылку на файл Excel"/>
         <TextBox x:Name="text" Background="Yellow"/>
         <Button Content="Отчет в Word" Background="Gray"/>
