@@ -1,5 +1,6 @@
 ﻿using System.Data;
 using System.IO;
+using System.Text;
 using System.Windows;
 using System.Windows.Controls;
 using ExcelDataReader;
@@ -12,12 +13,13 @@ namespace ExcelWord
     public partial class MainWindow : Window
     {
         private string filename = string.Empty;
-
+    
 
 
         public MainWindow()
         {
             InitializeComponent();
+            Encoding.RegisterProvider(CodePagesEncodingProvider.Instance);
         }
 
         private void MenuItem_Click(object sender, RoutedEventArgs e)
@@ -39,7 +41,7 @@ namespace ExcelWord
 
         private void Button_Click(object sender, RoutedEventArgs e)
         {
-            OpenExceleFile(textbox.Text);
+            OpenExceleFile(@"D:\Data.xlsx");
         }
 
         private void OpenExceleFile(string path)

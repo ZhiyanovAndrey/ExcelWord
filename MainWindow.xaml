@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:ExcelWord"
         mc:Ignorable="d"
-        Title="MainWindow" Height="200" Width="200">
+        Title="MainWindow" Height="1000" Width="800">
     <StackPanel>
         <Menu Background="gray">
             <MenuItem Header="Открыть" Click="MenuItem_Click"/>
@@ -14,6 +14,6 @@
         <Label Content="Введите ссылку на файл Excel"/>
         <TextBox x:Name="textbox" Background="Yellow"/>
         <Button Content="Отчет в Word" Background="Gray" Click="Button_Click"/>
-        <DataGrid x:Name="datagrid1" Height="102"/>
+        <DataGrid x:Name="datagrid1" Height="900"/>
     </StackPanel>
 </Window>
