@@ -8,11 +8,12 @@
         Title="MainWindow" Height="200" Width="200">
     <StackPanel>
         <Menu Background="gray">
-            <MenuItem Header="Открыть"/>
+            <MenuItem Header="Открыть" Click="MenuItem_Click"/>
             
         </Menu>
         <Label Content="Введите ссылку на файл Excel"/>
-        <TextBox x:Name="text" Background="Yellow"/>
-        <Button Content="Отчет в Word" Background="Gray"/>
+        <TextBox x:Name="textbox" Background="Yellow"/>
+        <Button Content="Отчет в Word" Background="Gray" Click="Button_Click"/>
+        <DataGrid x:Name="datagrid1" Height="102"/>
     </StackPanel>
 </Window>
