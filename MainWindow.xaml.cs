@@ -50,7 +50,7 @@ namespace ExcelWord
             Workbook wb = new Workbook(path);
 
             // Получить все рабочие листы
-            Worksheet worksheet = wb.Worksheets[0];
+            Worksheet worksheet = wb.Worksheets[1];
 
 
 
@@ -59,11 +59,11 @@ namespace ExcelWord
             int cols = worksheet.Cells.MaxDataColumn;
 
             // Цикл по строкам
-            for (int i = 0; i < rows; i++)
+            for (int i = 1; i < rows; i++)
             {
                 var data = new ExcelData
                 {
-                    Id = worksheet.Cells[i, 0].IntValue,
+                    Id = worksheet.Cells[i, 0].StringValue,
                     SurName = worksheet.Cells[i, 1].StringValue,
                     FirstName = worksheet.Cells[i, 2].StringValue,
                     MiddleName = worksheet.Cells[i, 3].StringValue,
