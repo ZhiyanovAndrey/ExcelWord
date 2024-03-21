@@ -41,7 +41,7 @@ namespace ExcelWord
 
         private void Button_Click(object sender, RoutedEventArgs e)
         {
-            var data = OpenExcelFile(@"D:\Data.xlsx").ToList();
+            var data = OpenExcelFile(@"D:\Data.xlsx").OrderBy(x=>x.SurName).ToList();
             datagrid1.ItemsSource = data;
         }
 
