@@ -12,7 +12,7 @@ namespace ExcelWord
     /// </summary>
     public partial class MainWindow : Window
     {
-        private string filename = string.Empty;
+        //private string filename = string.Empty;
 
 
 
@@ -40,11 +40,10 @@ namespace ExcelWord
 
         private void Button_Click(object sender, RoutedEventArgs e)
         {
-            OpenExcelFile(@"D:\Data.xlsx");
+            ExcelData.OpenExcelFile(@"D:\Data.xlsx");
         }
 
 
 
         }
     }
-}

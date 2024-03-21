@@ -20,7 +20,7 @@ namespace ExcelWord
 
         public ExcelData() { }
 
-        private void OpenExceleFile(string path)
+        public static void OpenExcelFile(string path)
         {
             // Загрузить файл Excel
             Workbook wb = new Workbook(path);
@@ -57,7 +57,7 @@ namespace ExcelWord
                 }
             }
 
-
+        }
 
 
 
