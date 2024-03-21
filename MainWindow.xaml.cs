@@ -40,64 +40,60 @@ namespace ExcelWord
 
         private void Button_Click(object sender, RoutedEventArgs e)
         {
-            OpenExcelFile(@"D:\Data.xlsx");
+            var data = OpenExcelFile(@"D:\Data.xlsx").ToList();
+            datagrid1.ItemsSource = data;
         }
 
-        public static void OpenExcelFile(string path)
+        public IEnumerable<ExcelData> OpenExcelFile(string path)
         {
             // Загрузить файл Excel
             Workbook wb = new Workbook(path);
 
             // Получить все рабочие листы
-            WorksheetCollection collection = wb.Worksheets;
+            Worksheet worksheet = wb.Worksheets[0];
 
-            // Перебрать все рабочие листы
-            for (int worksheetIndex = 0; worksheetIndex < collection.Count; worksheetIndex++)
+
+
+            // Получить количество строк и столбцов
+            int rows = worksheet.Cells.MaxDataRow;
+            int cols = worksheet.Cells.MaxDataColumn;
+
+            // Цикл по строкам
+            for (int i = 0; i < rows; i++)
             {
-
-                // Получить рабочий лист, используя его индекс
-                Worksheet worksheet = collection[worksheetIndex];
-
-                // Печать имени рабочего листа
-                Console.WriteLine("Worksheet: " + worksheet.Name);
-
-                // Получить количество строк и столбцов
-                int rows = worksheet.Cells.MaxDataRow;
-                int cols = worksheet.Cells.MaxDataColumn;
-
-                // Цикл по строкам
-                for (int i = 0; i < rows; i++)
+                var data = new ExcelData
                 {
+                    Id = worksheet.Cells[i, 0].IntValue,
+                    SurName = worksheet.Cells[i, 1].StringValue,
+                    FirstName = worksheet.Cells[i, 2].StringValue,
+                    MiddleName = worksheet.Cells[i, 3].StringValue,
+                    Birthday = worksheet.Cells[i, 4].DateTimeValue,
+                    Department = worksheet.Cells[i, 5].IntValue,
 
-                    // Перебрать каждый столбец в выбранной строке
-                    for (int j = 0; j < cols; j++)
-                    {
-                        // Значение ячейки Pring
-                        Console.Write(worksheet.Cells[i, j].Value + " | ");
-                    }
-                    // Распечатать разрыв строки
-                    Console.WriteLine(" ");
-                }
+                };
+                // И возвращаем его
+                yield return data;
             }
-
         }
 
-
-
-
-        //FileStream fileStream=File.Open(path,FileMode.Open,FileAccess.Read);
-        //IExcelDataReader reader = ExcelReaderFactory.CreateReader(fileStream);  // приводим поток к интерфейсу
-
-        //DataSet db = reader.AsDataSet(new ExcelDataSetConfiguration() // создадим бд
-        //{
-        //    ConfigureDataTable=(x) => new ExcelDataTableConfiguration()
-        //    {
-        //        UseHeaderRow = true   // считываем верхнюю строку с названием колонок
-        //    }
-        //});
-
-        //// присвоим
-        //datagrid1.ItemsSource=db.Tables;
-
     }
+
+
+
+
+    //FileStream fileStream=File.Open(path,FileMode.Open,FileAccess.Read);
+    //IExcelDataReader reader = ExcelReaderFactory.CreateReader(fileStream);  // приводим поток к интерфейсу
+
+    //DataSet db = reader.AsDataSet(new ExcelDataSetConfiguration() // создадим бд
+    //{
+    //    ConfigureDataTable=(x) => new ExcelDataTableConfiguration()
+    //    {
+    //        UseHeaderRow = true   // считываем верхнюю строку с названием колонок
+    //    }
+    //});
+
+    //// присвоим
+    //datagrid1.ItemsSource=db.Tables;
+
 }
+
