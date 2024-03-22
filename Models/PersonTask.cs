@@ -9,7 +9,7 @@ namespace ExcelWord.Models
 {
     public class PersonTask
     {
-        public long TaskId { get; set; }
+        public string TaskId { get; set; }
         public string PersonNumber { get; set; }
     }
 }

@@ -66,14 +66,14 @@ namespace ExcelWord.Models
         {
             Workbook wb = new Workbook(path);
             // Получить рабочий лист 3
-            using (Worksheet worksheet = wb.Worksheets[3])
+            using (Worksheet worksheet = wb.Worksheets[7])
             {
                 int rows = worksheet.Cells.MaxDataRow;
                 for (int i = 1; i <= rows; i++)
                 {
                     var tasks = new PersonTask
                     {
-                        TaskId = worksheet.Cells[i, 0].IntValue,
+                        TaskId = worksheet.Cells[i, 0].StringValue,
                         PersonNumber = worksheet.Cells[i, 1].StringValue,
                     };
 

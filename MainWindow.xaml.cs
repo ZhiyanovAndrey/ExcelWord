@@ -40,7 +40,7 @@ namespace ExcelWord
             //}
         }
 
-        const string path = @"D:\Data.xlsx";
+        const string path = @"D:\Data.xlsb";
 
         private void Button_Click(object sender, RoutedEventArgs e)
         {
@@ -60,10 +60,22 @@ namespace ExcelWord
 
         private void Button_Click_1(object sender, RoutedEventArgs e)
         {
-            //var query = from p in OpenExcelFile.GetPerson(path)
-            //            join d in OpenExcelFile.GetDepartment(path) on p.Department equals d.DepartmentId
-            //            join t in OpenExcelFile.GetTask(path)
-            //            select new { Name = $"{p.SurName} {p.FirstName}", DepartmentName = d.Name };
+            var query = from p in OpenExcelFile.GetPerson(path)
+                        //join d in OpenExcelFile.GetDepartment(path) on p.Department equals d.DepartmentId
+                        join t in OpenExcelFile.GetTask(path) on p.PersonNumber equals t.PersonNumber   
+                        select new { Name = $"{p.SurName} {p.FirstName}", TaskName = t.TaskId };
+
+            datagrid1.ItemsSource = query;
+        }
+
+        private void Button_Click_2(object sender, RoutedEventArgs e)
+        {
+            Workbook wb = new Workbook(path);
+
+            foreach (Worksheet worksheet in wb.Worksheets)
+            {
+                MessageBox.Show(worksheet.Name);
+            }
         }
     }
 
