@@ -61,14 +61,24 @@ namespace ExcelWord
         private void Button_Click_1(object sender, RoutedEventArgs e)
         {
             var query = from p in OpenExcelFile.GetPerson(path)
-                        //join d in OpenExcelFile.GetDepartment(path) on p.Department equals d.DepartmentId
+                        join d in OpenExcelFile.GetDepartment(path) on p.Department equals d.DepartmentId
                         join t in OpenExcelFile.GetTask(path) on p.PersonNumber equals t.PersonNumber   
-                        select new { Name = $"{p.SurName} {p.FirstName}", TaskName = t.TaskId };
+                        select new {Department = d.Name, Name = $"{p.SurName} {p.FirstName}", TaskName = t.TaskId };
 
             datagrid1.ItemsSource = query;
         }
 
         private void Button_Click_2(object sender, RoutedEventArgs e)
+        {
+            var query = from p in OpenExcelFile.GetPerson(path)
+                        join d in OpenExcelFile.GetDepartment(path) on p.Department equals d.DepartmentId
+                        join t in OpenExcelFile.GetTask(path) on p.PersonNumber equals t.PersonNumber
+                        select new { Department = d.Name, Name = $"{p.SurName} {p.FirstName}", TaskName = t.TaskId };
+
+            datagrid1.ItemsSource = query.GroupBy(p => p.Name).Select(g => new { Name = g.Key, Count = g.Count() });
+        }
+
+        private void Button_Click_3(object sender, RoutedEventArgs e)
         {
             Workbook wb = new Workbook(path);
 
