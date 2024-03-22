@@ -45,15 +45,17 @@ namespace ExcelWord
             var persons = GetPerson().ToList();
             var departments = GetDepartment().ToList();
 
-            //var result = person.Where(x => x.Department=department.DepartmentId);
-            //var result = person.Where(p=>p.Department=department.Select(x=>x.DepartmentId));
 
             var query = from p in persons
                         join d in departments on p.Department equals d.DepartmentId
                         select new { Name = $"{p.SurName} {p.FirstName}", DepartmentName = d.Name };
 
-            //OrderBy(x => x.SurName)
-            datagrid1.ItemsSource = query;
+
+
+            datagrid1.ItemsSource = query.GroupBy(p => p.DepartmentName).Select(g => new { Name = g.Key, Count = g.Count() }); 
+                
+               // .Where(g => g.Count() > 1)
+               //.Select(g => g.Key); 
         }
 
             // Загрузить файл Excel
