@@ -40,14 +40,14 @@ namespace ExcelWord
             //}
         }
 
+        const string path = @"D:\Data.xlsx";
+
         private void Button_Click(object sender, RoutedEventArgs e)
         {
-            var persons = GetPerson().ToList();
-            var departments = GetDepartment().ToList();
 
 
-            var query = from p in persons
-                        join d in departments on p.Department equals d.DepartmentId
+            var query = from p in OpenExcelFile.GetPerson(path)
+                        join d in OpenExcelFile.GetDepartment(path) on p.Department equals d.DepartmentId
                         select new { Name = $"{p.SurName} {p.FirstName}", DepartmentName = d.Name };
 
 
@@ -58,60 +58,13 @@ namespace ExcelWord
                //.Select(g => g.Key); 
         }
 
-            // Загрузить файл Excel
-            Workbook wb = new Workbook(@"D:\Data.xlsx");
-
-
-        public IEnumerable<Person> GetPerson()
+        private void Button_Click_1(object sender, RoutedEventArgs e)
         {
-
-            // Получить рабочий лист 1
-            using (Worksheet worksheet = wb.Worksheets[1])
-            {
-                // Получить количество строк и столбцов
-                int rows = worksheet.Cells.MaxDataRow;
-
-                // Цикл по строкам
-                for (int i = 1; i <= rows; i++)
-                {
-                    var person = new Person
-                    {
-                        PersonNumber = worksheet.Cells[i, 0].StringValue,
-                        SurName = worksheet.Cells[i, 1].StringValue,
-                        FirstName = worksheet.Cells[i, 2].StringValue,
-                        MiddleName = worksheet.Cells[i, 3].StringValue,
-                        Birthday = worksheet.Cells[i, 4].DateTimeValue,
-                        Department = worksheet.Cells[i, 5].IntValue,
-
-                    };
-                    // И возвращаем его
-                    yield return person;
-                }
-            };
+            //var query = from p in OpenExcelFile.GetPerson(path)
+            //            join d in OpenExcelFile.GetDepartment(path) on p.Department equals d.DepartmentId
+            //            join t in OpenExcelFile.GetTask(path)
+            //            select new { Name = $"{p.SurName} {p.FirstName}", DepartmentName = d.Name };
         }
-
-
-        public IEnumerable<Department> GetDepartment()
-        {
-
-            // Получить рабочий лист 2
-            using (Worksheet worksheet = wb.Worksheets[2])
-            {
-                int rows = worksheet.Cells.MaxDataRow;
-                for (int i = 1; i <= rows; i++)
-                {
-                    var department = new Department
-                    {
-                        DepartmentId = worksheet.Cells[i, 0].IntValue,
-                        Name = worksheet.Cells[i, 1].StringValue,
-                    };
-
-                    yield return department;
-                }
-               
-            };
-        }
-
     }
 
 

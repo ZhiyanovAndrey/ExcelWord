@@ -7,9 +7,9 @@ using System.Threading.Tasks;
 
 namespace ExcelWord.Models
 {
-    public class Task
+    public class PersonTask
     {
         public long TaskId { get; set; }
-        public string PersonId { get; set; }
+        public string PersonNumber { get; set; }
     }
 }
