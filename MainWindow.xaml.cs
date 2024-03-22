@@ -42,30 +42,34 @@ namespace ExcelWord
 
         private void Button_Click(object sender, RoutedEventArgs e)
         {
-            var data = OpenExcelFile(@"D:\Data.xlsx").OrderBy(x => x.SurName).ToList();
+            var person = OpenExcelFile().ToList();
+            var department = GetDepartment().ToList();
+
+            var result = person.Where(x => x.Department=department.DepartmentId);
+            department;
+
+
+            //OrderBy(x => x.SurName)
             datagrid1.ItemsSource = data;
         }
 
-        public IEnumerable<Person> OpenExcelFile(string path)
-        {
             // Загрузить файл Excel
-            using (Workbook wb = new Workbook(path)) 
+            Workbook wb = new Workbook(@"D:\Data.xlsx");
 
-            // Получить все рабочие листы
+
+        public IEnumerable<Person> OpenExcelFile()
+        {
+
+            // Получить рабочий лист 1
             using (Worksheet worksheet = wb.Worksheets[1])
             {
-
-
-
-
                 // Получить количество строк и столбцов
                 int rows = worksheet.Cells.MaxDataRow;
-                int cols = worksheet.Cells.MaxDataColumn;
 
                 // Цикл по строкам
                 for (int i = 1; i <= rows; i++)
                 {
-                    var data = new Person
+                    var person = new Person
                     {
                         PersonNumber = worksheet.Cells[i, 0].StringValue,
                         SurName = worksheet.Cells[i, 1].StringValue,
@@ -76,8 +80,30 @@ namespace ExcelWord
 
                     };
                     // И возвращаем его
-                    yield return data;
+                    yield return person;
                 }
+            };
+        }
+
+
+        public IEnumerable<Department> GetDepartment()
+        {
+
+            // Получить рабочий лист 2
+            using (Worksheet worksheet = wb.Worksheets[2])
+            {
+                int rows = worksheet.Cells.MaxDataRow;
+                for (int i = 1; i <= rows; i++)
+                {
+                    var department = new Department
+                    {
+                        DepartmentId = worksheet.Cells[i, 0].IntValue,
+                        Name = worksheet.Cells[i, 1].StringValue,
+                    };
+
+                    yield return department;
+                }
+               
             };
         }
 
