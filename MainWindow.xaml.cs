@@ -74,31 +74,26 @@ namespace ExcelWord
                         into pt from subb in pt.DefaultIfEmpty()
                         join d in OpenExcelFile.GetDepartment(path) on p.Department equals d.DepartmentId
                         into ptd from subc in ptd.DefaultIfEmpty()
-                        group new { p, pt, ptd} by new {p.SurName , p.Department } into g
-                        select new { Department = g.Key.Department, g.Key.SurName, Count = g.Count() };
-            //into pd from pd
-            //join t in OpenExcelFile.GetTask(path) on p.PersonNumber equals t.PersonNumber
-            //group new { p, d, t } by t.PersonNumber into g
-            //select new { Department = g.Select(x => x.d.Name), Name = g.Select(x => x.p.SurName), Count = g.Count() };
+                        group new { p, subb, subc} by new {p.SurName , p.Department } into g
+                        select new { g.Key.Department, g.Key.SurName, Group = g.Count(x=>x.subb !=null), Group_ptd = g.Count(x => x.subc != null) };
+            //select new { g.Key.Department, g.Key.SurName, Group_pt = g.Count(x => x.subb != null), Group_ptd = g.Count(x => x.subc != null) };
 
             datagrid1.ItemsSource = query;
         }
-        //        from subb in Group1.DefaultIfEmpty()
-        //                      join c in Table3 on a.Id equals c.AId into Group2
-        //                      from subc in Group2.DefaultIfEmpty()
-        //                      group new { a, subb, subc
-        //    }
-        //    by new { a.Id, a.Name
-        //}
-        //into g
-        //                       select new
-        //                              {
-        //                                  g.Key.Id,
-        //                                  g.Key.Name,
-        //                                  SubGroup1Count = g.Count(x => x.subb != null),
-        //                                  SubGroup2Count = g.Count(x => x.subc != null)
 
         private void Button_Click_3(object sender, RoutedEventArgs e)
+        {
+            var query = from p in OpenExcelFile.GetPerson(path)
+                        join d in OpenExcelFile.GetDepartment(path) on p.Department equals d.DepartmentId
+                        join t in OpenExcelFile.GetTask(path) on p.PersonNumber equals t.PersonNumber
+                        group new { p, d, t } by p.SurName into g
+                        select new { SurName = g.Key, Count = g.Count() };
+            // Многоуровневая группировка в LINQ?
+
+            datagrid1.ItemsSource = query.GroupBy(q => q.SurName).Select(g => new { Name = g.Key, Count = g.Count() });
+        }
+
+        private void Button_Click_4(object sender, RoutedEventArgs e)
         {
             Workbook wb = new Workbook(path);
 
