@@ -65,7 +65,7 @@ namespace ExcelWord
                         join t in OpenExcelFile.GetTask(path) on p.PersonNumber equals t.PersonNumber   
                         select new {Department = d.Name, Name = $"{p.SurName} {p.FirstName}", TaskName = t.TaskId };
 
-            datagrid1.ItemsSource = query;
+            datagrid1.ItemsSource = query.GroupBy(p => p.Name).Select(g => new { Name = g.Key, Count = g.Count() });
         }
 
         private void Button_Click_2(object sender, RoutedEventArgs e)
@@ -73,9 +73,10 @@ namespace ExcelWord
             var query = from p in OpenExcelFile.GetPerson(path)
                         join d in OpenExcelFile.GetDepartment(path) on p.Department equals d.DepartmentId
                         join t in OpenExcelFile.GetTask(path) on p.PersonNumber equals t.PersonNumber
-                        select new { Department = d.Name, Name = $"{p.SurName} {p.FirstName}", TaskName = t.TaskId };
+                        group new { p, d, t } by t.PersonNumber into g
+                        select new { Department = g.Select(x=>x.d.Name), Name = g.Select(x=>x.p.SurName), Count = g.Count() };
 
-            datagrid1.ItemsSource = query.GroupBy(p => p.Name).Select(g => new { Name = g.Key, Count = g.Count() });
+            datagrid1.ItemsSource = query;
         }
 
         private void Button_Click_3(object sender, RoutedEventArgs e)
