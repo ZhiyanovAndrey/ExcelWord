@@ -86,11 +86,12 @@ namespace ExcelWord
             var query = from p in OpenExcelFile.GetPerson(path)
                         join d in OpenExcelFile.GetDepartment(path) on p.Department equals d.DepartmentId
                         join t in OpenExcelFile.GetTask(path) on p.PersonNumber equals t.PersonNumber
-                        group new { p, d, t } by p.SurName into g
-                        select new { SurName = g.Key, Count = g.Count() };
+                        select new { Отдел = d.Name, ФИО = $"{p.SurName} {p.FirstName}", TaskName = t.TaskId };
+            //group new { p, d, t } by { p.SurName };
             // Многоуровневая группировка в LINQ?
 
-            datagrid1.ItemsSource = query.GroupBy(q => q.SurName).Select(g => new { Name = g.Key, Count = g.Count() });
+            datagrid1.ItemsSource = query.GroupBy(q => q.ФИО).Select(g => new { Name = g.Key, Count = g.Count() });
+                
         }
 
         private void Button_Click_4(object sender, RoutedEventArgs e)
