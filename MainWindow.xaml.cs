@@ -6,7 +6,7 @@ using System.Windows.Controls;
 using Aspose.Cells;
 using ExcelDataReader;
 using ExcelWord.Models;
-using Microsoft.Win32;
+using Word = Microsoft.Office.Interop.Word;
 
 namespace ExcelWord
 {
@@ -16,7 +16,8 @@ namespace ExcelWord
     public partial class MainWindow : Window
     {
         //private string filename = string.Empty;
-
+        private readonly string _path = @"D:\Data.xlsb";
+        private readonly string _wordTemplate = @"D:\Template.docx";
 
 
         public MainWindow()
@@ -41,14 +42,14 @@ namespace ExcelWord
             //}
         }
 
-        const string path = @"D:\Data.xlsb";
+    
 
         private void Button_Click(object sender, RoutedEventArgs e)
         {
 
 
-            var query = from p in OpenExcelFile.GetPerson(path)
-                        join d in OpenExcelFile.GetDepartment(path) on p.Department equals d.DepartmentId
+            var query = from p in OpenExcelFile.GetPerson(_path)
+                        join d in OpenExcelFile.GetDepartment(_path) on p.Department equals d.DepartmentId
                         select new { Name = $"{p.SurName} {p.FirstName}", DepartmentName = d.Name };
 
 
@@ -60,8 +61,8 @@ namespace ExcelWord
 
         private void Button_Click_1(object sender, RoutedEventArgs e)
         {
-            var query = from p in OpenExcelFile.GetPerson(path)
-                        join t in OpenExcelFile.GetTask(path) on p.PersonNumber equals t.PersonNumber
+            var query = from p in OpenExcelFile.GetPerson(_path)
+                        join t in OpenExcelFile.GetTask(_path) on p.PersonNumber equals t.PersonNumber
                         select new { Name = $"{p.SurName} {p.FirstName}", TaskName = t.TaskId };
 
             datagrid1.ItemsSource = query.GroupBy(p => p.Name).Select(g => new { Name = g.Key, Count = g.Count() });
@@ -69,10 +70,10 @@ namespace ExcelWord
 
         private void Button_Click_2(object sender, RoutedEventArgs e)
         {
-            var query = from p in OpenExcelFile.GetPerson(path)
-                        join t in OpenExcelFile.GetTask(path) on p.PersonNumber equals t.PersonNumber 
+            var query = from p in OpenExcelFile.GetPerson(_path)
+                        join t in OpenExcelFile.GetTask(_path) on p.PersonNumber equals t.PersonNumber 
                         into pt from subb in pt.DefaultIfEmpty()
-                        join d in OpenExcelFile.GetDepartment(path) on p.Department equals d.DepartmentId
+                        join d in OpenExcelFile.GetDepartment(_path) on p.Department equals d.DepartmentId
                         into ptd from subc in ptd.DefaultIfEmpty()
                         group new { p, subb, subc} by new {p.SurName , p.Department } into g
                         select new { g.Key.Department, g.Key.SurName, Group = g.Count(x=>x.subb !=null), Group_ptd = g.Count(x => x.subc != null) };
@@ -83,9 +84,9 @@ namespace ExcelWord
 
         private void Button_Click_3(object sender, RoutedEventArgs e)
         {
-            var query = from p in OpenExcelFile.GetPerson(path)
-                        join d in OpenExcelFile.GetDepartment(path) on p.Department equals d.DepartmentId
-                        join t in OpenExcelFile.GetTask(path) on p.PersonNumber equals t.PersonNumber
+            var query = from p in OpenExcelFile.GetPerson(_path)
+                        join d in OpenExcelFile.GetDepartment(_path) on p.Department equals d.DepartmentId
+                        join t in OpenExcelFile.GetTask(_path) on p.PersonNumber equals t.PersonNumber
                         select new { Отдел = d.Name, ФИО = $"{p.SurName} {p.FirstName}", TaskName = t.TaskId };
             //group new { p, d, t } by { p.SurName };
             // Многоуровневая группировка в LINQ?
@@ -96,12 +97,9 @@ namespace ExcelWord
 
         private void Button_Click_4(object sender, RoutedEventArgs e)
         {
-            Workbook wb = new Workbook(path);
-
-            foreach (Worksheet worksheet in wb.Worksheets)
-            {
-                MessageBox.Show(worksheet.Name);
-            }
+            var wordApp = new Word.Application();
+            wordApp.Visible = false; 
+            var template = wordApp.Documents.OpenNoRepairDialog(_wordTemplate);
         }
     }
 
