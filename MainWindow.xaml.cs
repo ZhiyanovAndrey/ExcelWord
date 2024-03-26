@@ -1,12 +1,8 @@
-﻿using System.Data;
-using System.IO;
-using System.Text.RegularExpressions;
+﻿using ExcelWord.Models;
+using System.Data;
 using System.Windows;
-using System.Windows.Controls;
-using Aspose.Cells;
-using ExcelDataReader;
-using ExcelWord.Models;
 using Word = Microsoft.Office.Interop.Word;
+
 
 namespace ExcelWord
 {
@@ -17,7 +13,9 @@ namespace ExcelWord
     {
         //private string filename = string.Empty;
         private readonly string _path = @"D:\Data.xlsb";
-        private readonly string _wordTemplate = @"D:\Template.docx";
+        private readonly string _wordTemplate = @"D:\Template.doc";
+
+        private WordExporter _wordExporter;
 
 
         public MainWindow()
@@ -42,7 +40,7 @@ namespace ExcelWord
             //}
         }
 
-    
+
 
         private void Button_Click(object sender, RoutedEventArgs e)
         {
@@ -56,7 +54,7 @@ namespace ExcelWord
 
             datagrid1.ItemsSource = query.GroupBy(p => p.DepartmentName).Select(g => new { Name = g.Key, Count = g.Count() });
 
-    
+
         }
 
         private void Button_Click_1(object sender, RoutedEventArgs e)
@@ -71,12 +69,14 @@ namespace ExcelWord
         private void Button_Click_2(object sender, RoutedEventArgs e)
         {
             var query = from p in OpenExcelFile.GetPerson(_path)
-                        join t in OpenExcelFile.GetTask(_path) on p.PersonNumber equals t.PersonNumber 
-                        into pt from subb in pt.DefaultIfEmpty()
+                        join t in OpenExcelFile.GetTask(_path) on p.PersonNumber equals t.PersonNumber
+                        into pt
+                        from subb in pt.DefaultIfEmpty()
                         join d in OpenExcelFile.GetDepartment(_path) on p.Department equals d.DepartmentId
-                        into ptd from subc in ptd.DefaultIfEmpty()
-                        group new { p, subb, subc} by new {p.SurName , p.Department } into g
-                        select new { g.Key.Department, g.Key.SurName, Group = g.Count(x=>x.subb !=null), Group_ptd = g.Count(x => x.subc != null) };
+                        into ptd
+                        from subc in ptd.DefaultIfEmpty()
+                        group new { p, subb, subc } by new { p.SurName, p.Department } into g
+                        select new { g.Key.Department, g.Key.SurName, Group = g.Count(x => x.subb != null), Group_ptd = g.Count(x => x.subc != null) };
             //select new { g.Key.Department, g.Key.SurName, Group_pt = g.Count(x => x.subb != null), Group_ptd = g.Count(x => x.subc != null) };
 
             datagrid1.ItemsSource = query;
@@ -92,33 +92,47 @@ namespace ExcelWord
             // Многоуровневая группировка в LINQ?
 
             datagrid1.ItemsSource = query.GroupBy(q => q.ФИО).Select(g => new { Name = g.Key, Count = g.Count() });
-                
+            // GroupBy(x=> new { x.Column1, x.Column2 }, (ключ, группа) => new { Key1 = ключ.Column1, Key2 = ключ.Column2 ,
         }
+
+
 
         private void Button_Click_4(object sender, RoutedEventArgs e)
         {
-            var wordApp = new Word.Application();
-            wordApp.Visible = false; 
-            var template = wordApp.Documents.OpenNoRepairDialog(_wordTemplate);
+            dynamic excel = Activator.CreateInstance(Type.GetTypeFromProgID("Excel.Application", true));
+            WordExporter.WordExport(datagrid1);
+
+
+
+
+            //try
+            //{
+
+            //var wordApp = new Word.Application();
+            //wordApp.Visible = false;
+            //var document = wordApp.Documents.Open(_wordTemplate);
+            //document.Activate();
+            //Word.Table table = document.Tables[1]; // таблица загруженная из документа
+
+            //table.Cell(1,1).Range.Text = _wordTemplate;
+
+            //}
+            //catch (Exception ex)
+            //{
+
+            //    MessageBox.Show(ex.Message);
+            //}
+
+
+
+
+
         }
     }
 
 
 
 
-    //FileStream fileStream=File.Open(path,FileMode.Open,FileAccess.Read);
-    //IExcelDataReader reader = ExcelReaderFactory.CreateReader(fileStream);  // приводим поток к интерфейсу
-
-    //DataSet db = reader.AsDataSet(new ExcelDataSetConfiguration() // создадим бд
-    //{
-    //    ConfigureDataTable=(x) => new ExcelDataTableConfiguration()
-    //    {
-    //        UseHeaderRow = true   // считываем верхнюю строку с названием колонок
-    //    }
-    //});
-
-    //// присвоим
-    //datagrid1.ItemsSource=db.Tables;
 
 }
 
