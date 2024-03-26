@@ -88,11 +88,12 @@ namespace ExcelWord
                         join d in OpenExcelFile.GetDepartment(_path) on p.Department equals d.DepartmentId
                         join t in OpenExcelFile.GetTask(_path) on p.PersonNumber equals t.PersonNumber
                         select new { Отдел = d.Name, ФИО = $"{p.SurName} {p.FirstName}", TaskName = t.TaskId };
-            //group new { p, d, t } by { p.SurName };
-            // Многоуровневая группировка в LINQ?
+  
 
-            datagrid1.ItemsSource = query.GroupBy(q => q.ФИО).Select(g => new { Name = g.Key, Count = g.Count() });
-            // GroupBy(x=> new { x.Column1, x.Column2 }, (ключ, группа) => new { Key1 = ключ.Column1, Key2 = ключ.Column2 ,
+            var query1 = query.GroupBy(q => new { q.Отдел, q.ФИО }).Select(g => new { g.Key.Отдел, g.Key.ФИО, Count = g.Count() });
+            var query2 = query1.GroupBy(q => new { q.Отдел}).Select(g => new { g.Key.Отдел, Count = g.Sum(x=>x.Count) });
+
+            datagrid1.ItemsSource = query2;
         }
 
 
